@@ -68,6 +68,7 @@ override_dh_virtualenv:
 		--extra-pip-arg "--no-cache-dir" \
 		--extra-pip-arg "--no-index" \
 		--extra-pip-arg "--find-links=${LOCAL_DEB_PYINDEX}" \
+		--extra-virtualenv-arg "--always-copy" \
 		--skip-install \
 		--preinstall "${LOCAL_DEB_PYINDEX}/${API_SDIST}" \
 		--preinstall "${LOCAL_DEB_PYINDEX}/${TEMPLATES_SDIST}" \
