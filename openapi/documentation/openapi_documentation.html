@@ -1,0 +1,38 @@
+<!doctype html> <!-- Important: must specify -->
+<html>
+<head>
+  <meta charset="utf-8"> <!-- Important: rapi-doc uses utf8 charecters -->
+  <script type="module" src="https://unpkg.com/rapidoc/dist/rapidoc-min.js"></script>
+</head>
+<body>
+  <!-- TODOs: -->
+  <!-- TODO: !!! Set allow-spec-file-load="false" when the OpenAPI json gets a URL !!! -->
+  <!-- TODO: Maybe allow-try="true" and set localhost:8080 as the server ? -->
+  <!-- TODO: Maybe allow-authentication="true" ? -->
+  <!-- TODO: Maybe set logo dimensions in a better, adaptive way? -->
+  <rapi-doc
+          spec-url="TODO: URL of OpenAPI json"
+          render-style="view"
+          allow-try="false"
+          allow-authentication="false"
+          allow-search="true"
+          allow-spec-url-load="false"
+          allow-spec-file-load="true"
+          show-info="true"
+          show-header="true"
+  >
+    <img
+      slot="nav-logo"
+      src="https://raw.githubusercontent.com/google/grr/gh-pages/img/grr_logo_real_sm.png"
+      width="150"
+      height="50"
+    />
+    <img
+      slot="logo"
+      src="https://raw.githubusercontent.com/google/grr/gh-pages/img/grr_logo_real_sm.png"
+      width="150"
+      height="50"
+    />
+  </rapi-doc>
+</body> 
+</html>
