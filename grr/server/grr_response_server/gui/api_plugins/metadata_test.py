@@ -58,6 +58,11 @@ class MetadataTypesHierarchyLeaf(rdf_structs.RDFProtoStruct):
   protobuf = tests_pb2.MetadataTypesHierarchyLeaf
 
 
+class MetadataOneOfFieldMessage(rdf_structs.RDFProtoStruct):
+  protobuf = tests_pb2.MetadataOneOfFieldMessage
+  rdf_deps = [MetadataSimpleMessage]
+
+
 class MetadataDummyApiCallRouter(api_call_router.ApiCallRouter):
   """Dummy `ApiCallRouter` implementation used for Metadata testing."""
 
@@ -99,6 +104,11 @@ class MetadataDummyApiCallRouter(api_call_router.ApiCallRouter):
   def Method6TypeReferences(self, args, token=None):
     """Method 6 description."""
 
+  @api_call_router.ArgsType(MetadataOneOfFieldMessage)
+  @api_call_router.Http("GET", "/metadata_test/method7")
+  def Method7OneOfField(self, args, token=None):
+    """Method 7 description."""
+
 
 class ApiGetOpenApiDescriptionHandlerTest(api_test_lib.ApiCallHandlerTest):
   """Test for `ApiGetOpenApiDescriptionHandler`."""
@@ -121,6 +131,7 @@ class ApiGetOpenApiDescriptionHandlerTest(api_test_lib.ApiCallHandlerTest):
       "Method4RepeatedField",
       "Method5EnumField",
       "Method6TypeReferences",
+      "Method7OneOfField"
     }
     extracted_methods = {method.name for method in self.router_methods.values()}
 
@@ -150,6 +161,7 @@ class ApiGetOpenApiDescriptionHandlerTest(api_test_lib.ApiCallHandlerTest):
         "/metadata_test/method4",
         "/metadata_test/method5",
         "/metadata_test/method6",
+        "/metadata_test/method7",
       },
       openapi_paths_dict.keys()
     )

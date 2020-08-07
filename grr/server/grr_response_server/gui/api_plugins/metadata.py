@@ -12,6 +12,7 @@ from typing import Type, Any, Union, Tuple, List, Set, Dict, DefaultDict
 from google.protobuf.descriptor import Descriptor
 from google.protobuf.descriptor import EnumDescriptor
 from google.protobuf.descriptor import FieldDescriptor
+from google.protobuf.descriptor import OneofDescriptor
 
 from grr_response_core import version
 from grr_response_core.lib.rdfvalues import structs as rdf_structs
@@ -173,6 +174,23 @@ class ApiGetOpenApiDescriptionHandler(api_call_handler_base.ApiCallHandler):
       cast(Dict[str, Dict[str, str]], primitive_types_schemas)
     )
 
+  def _CreateOneofSchema(
+      self,
+      descriptor: OneofDescriptor,
+      visiting: Set[str]
+  ) -> None:
+    """Creates the OpenAPI schema of a oneof field's "type".
+
+    A protobuf oneof practically describes a new type that is the union of other
+    types. A caveat is that this type is used only once: for the field that it
+    defines.
+    # TODO: What about oneof's field names? You will need an OpenAPI allOf that
+    # merges together an object that holds all the invariable fields of the
+    # MessageSchema and a OpenAPI anyOf consisting of objects that hold exactly
+    # one property which represents one of the Protobuf oneof's fields.
+
+    """
+
   def _CreateEnumSchema(
       self,
       descriptor: EnumDescriptor,
@@ -243,16 +261,33 @@ class ApiGetOpenApiDescriptionHandler(api_call_handler_base.ApiCallHandler):
     properties = dict()
     visiting.add(type_name)
 
-    # Create schemas for the fields' types.
+    # Create schemas for the types that oneof fields define and store references
+    # to these types when describing the oneof field in the message schema.
+    for oneof_descriptor in descriptor.oneofs:
+      self._CreateSchema(oneof_descriptor, visiting)
+
+      oneof_field_name = oneof_descriptor.name
+      properties[oneof_field_name] = (
+        self._GetReferenceObject(
+          self._GetTypeName(oneof_descriptor)
+        )
+      )
+
+    if type_name == "grr.MetadataOneOfFieldMessage":  # TODO: delete
+      field_descriptors_names = [fd.name for fd in descriptor.fields] # TODO: delete
+      raise ValueError(f"Fields of {type_name}: {field_descriptors_names}") # TODO: delete
+
+    # Create schemas for the types of the fields that are not part of the
+    # previously described oneOf fields, if their types don't have schemas
+    # created yet, and store references to these types in the schema of the
+    # message.
     for field_descriptor in descriptor.fields:
+      if field_descriptor.containing_oneof:
+        continue
+
+      self._CreateSchema(field_descriptor, visiting)
+
       field_name = field_descriptor.name
-      message_descriptor = field_descriptor.message_type # None if not Message.
-      enum_descriptor = field_descriptor.enum_type # None if not Enum.
-      descriptor = message_descriptor or enum_descriptor
-
-      if descriptor:
-        self._CreateSchema(descriptor, visiting)
-
       properties[field_name] = (
         self._GetReferenceObject(
           _GetTypeName(field_descriptor),
@@ -292,12 +327,26 @@ class ApiGetOpenApiDescriptionHandler(api_call_handler_base.ApiCallHandler):
       # Dependency cycle.
       return
 
-    if isinstance(cls, Descriptor):
-      self._CreateMessageSchema(cls, visiting)
+    if isinstance(cls, FieldDescriptor):
+      # Unwrap the contained descriptor, if any, otherwise this FieldDescriptor
+      # describes a primitive type field, so its schema is already created.
+      message_descriptor = cls.message_type  # None if not Message.
+      enum_descriptor = cls.enum_type  # None if not Enum.
+      descriptor = message_descriptor or enum_descriptor
+      if descriptor:
+        self._CreateSchema(descriptor, visiting)
+      return
+
+    if isinstance(cls, OneofDescriptor):
+      self._CreateOneofSchema(cls, visiting)
       return
 
     if isinstance(cls, EnumDescriptor):
       self._CreateEnumSchema(cls)
+      return
+
+    if isinstance(cls, Descriptor):
+      self._CreateMessageSchema(cls, visiting)
       return
 
     raise TypeError(f"Don't know how to handle type \"{type_name}\" "
