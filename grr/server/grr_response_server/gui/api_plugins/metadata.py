@@ -188,7 +188,13 @@ class ApiGetOpenApiDescriptionHandler(api_call_handler_base.ApiCallHandler):
     # merges together an object that holds all the invariable fields of the
     # MessageSchema and a OpenAPI anyOf consisting of objects that hold exactly
     # one property which represents one of the Protobuf oneof's fields.
-
+    # TODO: Ok, ok, this works for describing the Message Schema and, therefore,
+    # for result types of routes, but if there is a protobuf oneof part of a
+    # route's parameters? This is a big problem and a block because the
+    # OpenAPI Specification does not support interdependencies (including mutual
+    # exclusion) between parameters yet [1].
+    #
+    # [1]: https://github.com/OAI/OpenAPI-Specification/issues/256
     """
 
   def _CreateEnumSchema(
@@ -263,13 +269,14 @@ class ApiGetOpenApiDescriptionHandler(api_call_handler_base.ApiCallHandler):
 
     # Create schemas for the types that oneof fields define and store references
     # to these types when describing the oneof field in the message schema.
+    # Firstly, visit the types
     for oneof_descriptor in descriptor.oneofs:
       self._CreateSchema(oneof_descriptor, visiting)
 
       oneof_field_name = oneof_descriptor.name
       properties[oneof_field_name] = (
         self._GetReferenceObject(
-          self._GetTypeName(oneof_descriptor)
+          _GetTypeName(oneof_descriptor)
         )
       )
 
