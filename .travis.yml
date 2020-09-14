@@ -10,7 +10,13 @@ matrix:
         - OPENAPI_JSON_FILE_NAME=test_openapi_description.json
         - OPENAPI_DOCUMENTATION_FILE_NAME=grr_api_documentation.html
       install:
-        - pip install absl-py
+        - pip install -e grr/proto/
+        - pip install -e grr/core/
+        - pip install -e grr/client/
+        - pip install -e grr/client_builder/
+        - pip install -e api_client/python/
+        - pip install mysqlclient
+        - pip install -e grr/server/
       script:
         - pwd
         - ls -ltr
