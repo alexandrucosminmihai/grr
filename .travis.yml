@@ -6,7 +6,8 @@ matrix:
       dist: xenial
       language: python
       python: 3.6
-      node_js: node
+      node_js:
+        - 14
       env:
         - OPENAPI_JSON_FILE_NAME=test_openapi_description.json
         - OPENAPI_DOCUMENTATION_FILE_NAME=grr_api_documentation.html
