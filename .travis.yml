@@ -3,7 +3,7 @@ matrix:
   include:
     # OpenAPI documentation generation.
     - os: linux
-      dist: xenial
+      dist: bionic
       language: python
       python: 3.6
       node_js: 12
