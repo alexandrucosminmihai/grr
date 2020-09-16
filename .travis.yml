@@ -9,7 +9,7 @@ matrix:
       node_js: 12
       env:
         - OPENAPI_JSON_FILE_NAME=test_openapi_description.json
-        - OPENAPI_DOCUMENTATION_FOLDER_NAME = generated_documentation
+        - OPENAPI_DOCUMENTATION_FOLDER_NAME=generated_documentation
         - OPENAPI_DOCUMENTATION_FILE_NAME=grr_api_documentation.html
       install:
         - pip install -e grr/proto/
