@@ -34,7 +34,8 @@ matrix:
         provider: pages
         skip_cleanup: true
         github_token: $DOCUMENTATION_GITHUB_TOKEN
-        keep_history: true
+        keep_history: false
         on:
           branch: grr_openapi_ci_generate_description
         target_branch: grr_openapi_generated_documentation
+        local_dir: "${HOME}/${OPENAPI_DOCUMENTATION_FOLDER_NAME}"
