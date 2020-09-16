@@ -9,6 +9,7 @@ matrix:
       node_js: 12
       env:
         - OPENAPI_JSON_FILE_NAME=test_openapi_description.json
+        - OPENAPI_DOCUMENTATION_FOLDER_NAME = generated_documentation
         - OPENAPI_DOCUMENTATION_FILE_NAME=grr_api_documentation.html
       install:
         - pip install -e grr/proto/
@@ -24,9 +25,15 @@ matrix:
         - ls -ltr travis
         - python "travis/get_openapi_description.py"
         - npx redoc-cli@0.9.12 bundle "${HOME}/${OPENAPI_JSON_FILE_NAME}"
-        - mv "redoc-static.html" "${HOME}/${OPENAPI_DOCUMENTATION_FILE_NAME}"
-        - ls -ltr "${HOME}/${OPENAPI_DOCUMENTATION_FILE_NAME}"
+        - mv "redoc-static.html" "${HOME}/${OPENAPI_DOCUMENTATION_FOLDER_NAME}/${OPENAPI_DOCUMENTATION_FILE_NAME}"
+        - ls -ltr "${HOME}/${OPENAPI_DOCUMENTATION_FOLDER_NAME}/${OPENAPI_DOCUMENTATION_FILE_NAME}"
         - ls -ltr
         - ls -ltr travis
-
-
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $DOCUMENTATION_GITHUB_TOKEN
+        keep_history: true
+        on:
+          branch: dev-doc
+        target_branch: grr_openapi_generated_documentation
