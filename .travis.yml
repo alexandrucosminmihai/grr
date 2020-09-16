@@ -36,5 +36,5 @@ matrix:
         github_token: $DOCUMENTATION_GITHUB_TOKEN
         keep_history: true
         on:
-          branch: dev-doc
+          branch: grr_openapi_ci_generate_description
         target_branch: grr_openapi_generated_documentation
