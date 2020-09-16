@@ -10,7 +10,7 @@ matrix:
       env:
         - OPENAPI_JSON_FILE_NAME=test_openapi_description.json
         - OPENAPI_DOCUMENTATION_FOLDER_NAME=generated_documentation
-        - OPENAPI_DOCUMENTATION_FILE_NAME=grr_api_documentation.html
+        - OPENAPI_DOCUMENTATION_FILE_NAME=index.html
       install:
         - pip install -e grr/proto/
         - pip install -e grr/core/
@@ -34,7 +34,7 @@ matrix:
         provider: pages
         skip_cleanup: true
         github_token: $DOCUMENTATION_GITHUB_TOKEN
-        keep_history: false
+        keep_history: true
         on:
           branch: grr_openapi_ci_generate_description
         target_branch: grr_openapi_generated_documentation
