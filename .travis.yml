@@ -12,13 +12,13 @@ matrix:
         - OPENAPI_DOCUMENTATION_FOLDER_NAME=generated_documentation
         - OPENAPI_DOCUMENTATION_FILE_NAME=index.html
       install:
-        - pip install -e grr/proto/
-        - pip install -e grr/core/
-        - pip install -e grr/client/
-        - pip install -e grr/client_builder/
-        - pip install -e api_client/python/
-        - pip install mysqlclient
-        - pip install -e grr/server/
+        - pip install -e grr/proto/ --progress-bar off
+        - pip install -e grr/core/ --progress-bar off
+        - pip install -e grr/client/ --progress-bar off
+        - pip install -e grr/client_builder/ --progress-bar off
+        - pip install -e api_client/python/ --progress-bar off
+        - pip install mysqlclient --progress-bar off
+        - pip install -e grr/server/ --progress-bar off
       script:
         - pwd
         - ls -ltr
