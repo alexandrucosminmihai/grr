@@ -8,7 +8,8 @@ matrix:
       python: 3.6
       node_js: 12
       env:
-        - OPENAPI_JSON_FILE_NAME=test_openapi_description.json
+        - OPENAPI_JSON_FOLDER_NAME=generated_description
+        - OPENAPI_JSON_FILE_NAME=openapi_description.json
         - OPENAPI_DOCUMENTATION_FOLDER_NAME=generated_documentation
         - OPENAPI_DOCUMENTATION_FILE_NAME=index.html
       install:
@@ -21,15 +22,23 @@ matrix:
         - pip install -e grr/server/ --progress-bar off
       script:
         - python "travis/get_openapi_description.py"
-        - npx redoc-cli@0.9.12 bundle "${HOME}/${OPENAPI_JSON_FILE_NAME}"
+        - npx redoc-cli@0.9.12 bundle "${HOME}/${OPENAPI_JSON_FOLDER_NAME}/${OPENAPI_JSON_FILE_NAME}"
         - mkdir "${HOME}/${OPENAPI_DOCUMENTATION_FOLDER_NAME}"
         - mv "redoc-static.html" "${HOME}/${OPENAPI_DOCUMENTATION_FOLDER_NAME}/${OPENAPI_DOCUMENTATION_FILE_NAME}"
       deploy:
-        provider: pages
-        skip_cleanup: true
-        github_token: $DOCUMENTATION_GITHUB_TOKEN
-        keep_history: true
-        on:
-          branch: grr_openapi_ci_generate_description
-        target_branch: grr_openapi_generated_documentation
-        local_dir: "${HOME}/${OPENAPI_DOCUMENTATION_FOLDER_NAME}"
+        - provider: pages
+          skip_cleanup: true
+          github_token: $DOCUMENTATION_GITHUB_TOKEN
+          keep_history: true
+          on:
+            branch: grr_openapi_ci_generate_description
+          target_branch: grr_openapi_generated_documentation
+          local_dir: "${HOME}/${OPENAPI_DOCUMENTATION_FOLDER_NAME}"
+        - provider: pages
+          skip_cleanup: true
+          github_token: $DOCUMENTATION_GITHUB_TOKEN
+          keep_histroy: false
+          on:
+            branch: grr_openapi_ci_generate_description
+          target_branch: grr_openapi_generated_description
+          local_dir: "${HOME}/${OPENAPI_JSON_FOLDER_NAME}"
