@@ -37,7 +37,7 @@ matrix:
         - provider: pages
           skip_cleanup: true
           github_token: $DOCUMENTATION_GITHUB_TOKEN
-          keep_histroy: false
+          keep_histroy: true
           on:
             branch: grr_openapi_ci_generate_description
           target_branch: grr_openapi_generated_description
